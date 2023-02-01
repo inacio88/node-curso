@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "nodemon": "^2.0.20"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "nodenetninja",
+  "version": "1.0.0",
+  "main": "server.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inacio88/node-curso.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/inacio88/node-curso/issues"
+  },
+  "homepage": "https://github.com/inacio88/node-curso#readme",
+  "description": ""
+}

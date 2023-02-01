@@ -542,28 +542,90 @@ server.listen(3000, 'localhost', () =>{
 })
  ~~~
 
+##### nodemon para não ficar ter que cancelando o processo a toda alteração
+ ~~~bash
+ npm install nodemon
+ npm install -g nodemon #instalaria globalmente
 
+ node node_modules/nodemon/bin/nodemon.js server
+ ~~~
+
+##### npm
+- Para criar o package.json
+- Organizar dependências, scripts e outras informações
+ ~~~bash
+ npm init
+ ~~~
+
+- lodash tem várias funções interessantes, olhar depois
+~~~javascript
+ npm install lodash
+ ~~~
  ~~~javascript
- 
+ const http = require('http');
+const fs = require('fs');
+const _ = require('lodash');
+
+const server = http.createServer((req, res) =>{
+    console.log('request foi feito');
+    //ladash
+    const num = _.random(3, 20);
+    console.log(num);
+
+    const greet = _.once(() =>{
+        console.log('heloo');
+    });
+    greet();
+    greet();
+
+    //set header content type
+    res.setHeader('Content-Type', 'text/html');
+    let path = './views/';
+    switch(req.url){
+        case '/':
+            path += 'index.html';
+            res.statusCode = 200;
+            break;
+        case '/about':
+            path += 'about.html';
+            res.statusCode = 200;
+            break
+        case '/about-me':
+            res.statusCode = 301;
+            res.setHeader('Location', '/about')
+            res.end();
+            break
+        default:
+            path += '404.html';
+            res.statusCode = 404;
+            break
+    }
+    //send html 
+    fs.readFile(path, (err, data)=>{
+        if(err){
+            
+            console.log(err);
+            res.end();
+        }
+        else{
+            res.end(data);
+        }
+    })
+
+
+});
+
+server.listen(3000, 'localhost', () =>{
+    console.log('listening for requests on port 3000')
+})
  ~~~
 
 
- ~~~javascript
  
- ~~~
-
-
- ~~~javascript
- 
- ~~~
-
-
- ~~~javascript
- 
- ~~~
-
- ~~~javascript
- 
+#### Dependecies
+ - vai instalar as dependências
+ ~~~bash
+ npm install
  ~~~
 
 

@@ -1,8 +1,18 @@
 const http = require('http');
 const fs = require('fs');
+const _ = require('lodash');
 
 const server = http.createServer((req, res) =>{
     console.log('request foi feito');
+    //ladash
+    const num = _.random(3, 20);
+    console.log(num);
+
+    const greet = _.once(() =>{
+        console.log('heloo');
+    });
+    greet();
+    greet();
 
     //set header content type
     res.setHeader('Content-Type', 'text/html');
