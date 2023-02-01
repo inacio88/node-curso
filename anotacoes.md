@@ -282,47 +282,264 @@ const writeStream = fs.createWriteStream('./docs/blog4.txt', {encoding: 'utf8'})
 readStream.pipe(writeStream)
  ~~~
 
-
+ ### Clients and Servers
+ - Criando um local server
+ server.js
  ~~~javascript
- 
+ const http = require('http');
+const server = http.createServer((req, res) =>{
+    console.log('request foi feito');
+});
+
+server.listen(3000, 'localhost', () =>{
+    console.log('listening for requests on port 3000')
+})
+ ~~~
+
+ bash
+ ~~~javascript
+ node server.js
+ ~~~
+- Vai ficar esperando um request
+
+
+#### Request and Response
+ ~~~javascript
+ const http = require('http');
+const server = http.createServer((req, res) =>{
+    console.log('request foi feito');
+    console.log(req)
+    console.log(req.url)
+    console.log(req.method)
+
+
+});
+
+server.listen(3000, 'localhost', () =>{
+    console.log('listening for requests on port 3000')
+})
+ ~~~
+ - set header content type
+ ~~~javascript
+ const http = require('http');
+const server = http.createServer((req, res) =>{
+    console.log('request foi feito');
+
+    //set header content type
+    res.setHeader('Content-Type', 'text/plain');
+    res.write('ola, mundo');
+    res.end();
+});
+
+server.listen(3000, 'localhost', () =>{
+    console.log('listening for requests on port 3000')
+})
+ ~~~
+
+##### returning HTML pages
+ ~~~javascript
+ const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer((req, res) =>{
+    console.log('request foi feito');
+
+    //set header content type
+    res.setHeader('Content-Type', 'text/html');
+    //send html 
+    fs.readFile('./views/index.html', (err, data)=>{
+        if(err){
+            
+            console.log(err);
+            res.end();
+        }
+        else{
+            
+            res.write(data);
+            res.end();
+        }
+    })
+
+
+});
+
+server.listen(3000, 'localhost', () =>{
+    console.log('listening for requests on port 3000')
+})
+ ~~~
+
+- alternativa do código acima
+ ~~~javascript
+ const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer((req, res) =>{
+    console.log('request foi feito');
+
+    //set header content type
+    res.setHeader('Content-Type', 'text/html');
+    //send html 
+    fs.readFile('./views/index.html', (err, data)=>{
+        if(err){
+            
+            console.log(err);
+            res.end();
+        }
+        else{
+            
+            res.end(data);
+        }
+    })
+
+
+});
+
+server.listen(3000, 'localhost', () =>{
+    console.log('listening for requests on port 3000')
+})
+ ~~~
+
+#### Basic Routing
+ ~~~javascript
+ const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer((req, res) =>{
+    console.log('request foi feito');
+
+    //set header content type
+    res.setHeader('Content-Type', 'text/html');
+    let path = './views/';
+    switch(req.url){
+        case '/':
+            path += 'index.html';
+            break;
+        case '/about':
+            path += 'about.html';
+            break
+        default:
+            path += '404.html';
+            break
+    }
+    //send html 
+    fs.readFile(path, (err, data)=>{
+        if(err){
+            
+            console.log(err);
+            res.end();
+        }
+        else{
+            
+            res.end(data);
+        }
+    })
+
+
+});
+
+server.listen(3000, 'localhost', () =>{
+    console.log('listening for requests on port 3000')
+})
  ~~~
 
 
+#### Status codes
+    - 200 ok
+    - 301 Resource moved
+    - 404 Not found
+    - 500 Internal server error
  ~~~javascript
- 
+ const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer((req, res) =>{
+    console.log('request foi feito');
+
+    //set header content type
+    res.setHeader('Content-Type', 'text/html');
+    let path = './views/';
+    switch(req.url){
+        case '/':
+            path += 'index.html';
+            res.statusCode = 200;
+            break;
+        case '/about':
+            path += 'about.html';
+            res.statusCode = 200;
+            break
+        default:
+            path += '404.html';
+            res.statusCode = 404;
+            break
+    }
+    //send html 
+    fs.readFile(path, (err, data)=>{
+        if(err){
+            
+            console.log(err);
+            res.end();
+        }
+        else{
+            res.end(data);
+        }
+    })
+
+
+});
+
+server.listen(3000, 'localhost', () =>{
+    console.log('listening for requests on port 3000')
+})
  ~~~
 
-
+#### Redirects
  ~~~javascript
- 
- ~~~
+ const http = require('http');
+const fs = require('fs');
 
- ~~~javascript
- 
- ~~~
+const server = http.createServer((req, res) =>{
+    console.log('request foi feito');
+
+    //set header content type
+    res.setHeader('Content-Type', 'text/html');
+    let path = './views/';
+    switch(req.url){
+        case '/':
+            path += 'index.html';
+            res.statusCode = 200;
+            break;
+        case '/about':
+            path += 'about.html';
+            res.statusCode = 200;
+            break
+        case '/about-me':
+            res.statusCode = 301;
+            res.setHeader('Location', '/about')
+            res.end();
+            break
+        default:
+            path += '404.html';
+            res.statusCode = 404;
+            break
+    }
+    //send html 
+    fs.readFile(path, (err, data)=>{
+        if(err){
+            
+            console.log(err);
+            res.end();
+        }
+        else{
+            res.end(data);
+        }
+    })
 
 
- ~~~javascript
- 
- ~~~
+});
 
-
- ~~~javascript
- 
- ~~~
-
-
- ~~~javascript
- 
- ~~~
-
-
- ~~~javascript
- 
- ~~~
-
- ~~~javascript
- 
+server.listen(3000, 'localhost', () =>{
+    console.log('listening for requests on port 3000')
+})
  ~~~
 
 
