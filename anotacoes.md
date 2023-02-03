@@ -711,18 +711,108 @@ app.use((req, res) =>{
 })
  ~~~
 
+
+#### View engines
+- ejs
+- EJS templates are processed though the EJS view engine on the server
+
+###### render e passando objetos para view
  ~~~javascript
- 
+ const express = require('express');
+
+//express app
+const app = express();
+
+//register view engine
+
+app.set('view engine', 'ejs');
+//app.set('views', 'myviews'); caso as views não fossem colocadas numa pasta chamada views
+
+//listen for requests
+app.listen(3000);//retorna uma instância do server se quiser armazenar num var para usar depois
+
+app.get('/', (req, res)=>{
+    const blogs = [
+        {title: 'A cada dia da hora', snippet: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'},
+        {title: 'A cada dia da hora', snippet: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'},
+        {title: 'A cada dia da hora', snippet: 'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv'}
+    ];
+    res.render('index', {title: 'home', blogs});// passando um dado para a view
+});
+
+
+app.get('/about', (req, res)=>{
+    res.render('about', {title: 'about'})
+});
+
+
+app.get('/blogs/create', (req, res) =>{
+    res.render('create', {title: 'create'});
+})
+
+
+app.use((req, res) =>{
+    res.status(404).render('404', {title: '404'})
+})
  ~~~
 
-
+###### .ejs
  ~~~javascript
- 
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>blog | <%= title %></title>
+</head>
+<body>
+    <nav>
+        <div class="site-title">
+            <a href="/"><h1>blog ninja</h1></a>
+            <p>A net ninja site</p>
+        </div>
+        <ul>
+            <li><a href="/">blog</a></li>
+            <li><a href="/about">about</a></li>
+            <li><a href="/blogs/create">new blog</a></li>
+        </ul>
+    </nav>
+    <div class="blogs content">
+        <h2>All blogs</h2>
+        <% if (blogs.length > 0) { %>
+            <% blogs.forEach(blog => { %>
+            
+                <h3><%=blog.title %></h3>
+                <p><%=blog.snippet %></p>
+            
+            <% }); %>
+        <% } else { %>
+            <p>Vazio</p>
+            <% } %>
+    </div>
+</body>
+</html>
  ~~~
 
-
+###### partials
  ~~~javascript
- 
+ <!DOCTYPE html>
+<html lang="en">
+    <%- include('./partials/head.ejs') %>
+
+<body>
+    <%- include('./partials/nav.ejs') %>
+
+
+    <div class="about content">
+        <h1>not found</h1>
+
+    </div>
+
+    <%- include('./partials/footer.ejs') %>
+</body>
+</html>
  ~~~
 
 
