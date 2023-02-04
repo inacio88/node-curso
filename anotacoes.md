@@ -815,22 +815,75 @@ app.use((req, res) =>{
 </html>
  ~~~
 
-
+#### Middleware
+##### .next() .use()
+- Any code which runs on the server between getting a request and sending a response
+- Logger middleware to log details of every request
+- Authentication check middleware for protected routes
+- Middleware to parse JSON data from requests
+- Return 404 pages
  ~~~javascript
- 
+ const express = require('express');
+
+//express app
+const app = express();
+
+//register view engine
+
+app.set('view engine', 'ejs');
+//app.set('views', 'myviews'); caso as views não fossem colocadas numa pasta chamada views
+
+//listen for requests
+app.listen(3003);//retorna uma instância do server se quiser armazenar num var para usar depois
+
+app.use((req, res, next) =>{
+    console.log('New request made: ');
+    console.log('Host: ', req.hostname);
+    console.log('Path: ', req.path);
+    console.log('Method: ', req.method);
+    next(); //para sair daqui e ir pro próximo tentando reconhecer o path
+});
+
+app.get('/', (req, res)=>{
+    const blogs = [
+        {title: 'A cada dia da hora', snippet: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'},
+        {title: 'A cada dia da hora', snippet: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'},
+        {title: 'A cada dia da hora', snippet: 'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv'}
+    ];
+    res.render('index', {title: 'home', blogs});// passando um dado para a view
+});
+
+
+app.get('/about', (req, res)=>{
+    res.render('about', {title: 'about'})
+});
+
+
+app.get('/blogs/create', (req, res) =>{
+    res.render('create', {title: 'create'});
+})
+
+
+app.use((req, res) =>{
+    res.status(404).render('404', {title: '404'})
+})
  ~~~
 
-
- ~~~javascript
- 
+##### 3dr party middleware
+- instalar
+ ~~~bash
+ npm install morgan
  ~~~
 
  ~~~javascript
- 
+const morgan = require('morgan');
+app.use(morgan('dev'));
  ~~~
 
-
+##### static files
+- define um diretório para poder ser acessado
  ~~~javascript
+app.use(express.static('public'));
  
  ~~~
 

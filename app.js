@@ -1,4 +1,5 @@
 const express = require('express');
+const morgan = require('morgan');
 
 //express app
 const app = express();
@@ -9,7 +10,12 @@ app.set('view engine', 'ejs');
 //app.set('views', 'myviews'); caso as views não fossem colocadas numa pasta chamada views
 
 //listen for requests
-app.listen(3000);//retorna uma instância do server se quiser armazenar num var para usar depois
+app.listen(3003);//retorna uma instância do server se quiser armazenar num var para usar depois
+
+
+//middleware static files
+app.use(express.static('public'));
+app.use(morgan('dev'))
 
 app.get('/', (req, res)=>{
     const blogs = [
