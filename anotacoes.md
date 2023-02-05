@@ -887,21 +887,87 @@ app.use(express.static('public'));
  
  ~~~
 
-
- ~~~javascript
- 
+##### Mongodb
+- Mongoose
+    - is an ODM library object document mapping library
+    - Schemas defines the structure of a type of data/document
+        - Properties and property types
+    - Models allow us to communicate with database collections
+ ~~~bash
+  npm install mongoose
  ~~~
 
-
+ - Criando um Schema
  ~~~javascript
- 
+ const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const blogSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    snippet: {
+        type: String,
+        required: true
+    },
+    body: {
+        type: String,
+        required: true
+    }
+}, {timestamps: true});
+
+const Blog = mongoose.model('Blog', blogSchema);
+
+module.exports = Blog;
  ~~~
 
-
+- basic on how to interact with the database
  ~~~javascript
- 
+ // mongoose and ong sandbox routes
+app.get('/add-blog', (req, res)=>{
+    const blog = new Blog({
+        title: 'new blog 2',
+        snippet: 'about my new blog',
+        body: 'tesxteowjfaosiefjoasejfoajojfoasidjfoiasj'
+    });
+
+    blog.save()
+    .then((result) =>{
+        res.send(result)
+    })
+    .catch((err) =>{
+        console.log(err)
+        console.log('erro no save')
+    })
+})
+
+
+app.get('/all-blogs', (req, res)=>{
+    Blog.find()
+    .then((result) =>{
+        res.send(result);
+    })
+    .catch((err) =>{
+        console.log(err)
+        console.log('erro no find')
+    })
+})
+
+
+app.get('/single-blog', (req, res) =>{
+    Blog.findById('63e02c5fd9081135f4650645')
+    .then((result) =>{
+        res.send(result);
+    })
+    .catch((err) =>{
+        console.log(err)
+        console.log('erro no findby id')
+    })
+})
  ~~~
 
+##### Outputting documents in views
  ~~~javascript
  
  ~~~
