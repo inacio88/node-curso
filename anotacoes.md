@@ -1097,7 +1097,10 @@ app.use(express.urlencoded({extended: true}));
 })
  ~~~
 
-
+##### MVC
+- stands for model, view, controller
+- MVC is a way of structuring our code and files
+- Keeps code more modular, reusable and easier to read
  ~~~javascript
  
  ~~~
