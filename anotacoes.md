@@ -969,12 +969,37 @@ app.get('/single-blog', (req, res) =>{
 
 ##### Outputting documents in views
  ~~~javascript
- 
+ app.get('/blogs', (req, res)=>{
+    Blog.find().sort({createdAt: -1})
+        .then((result) =>{
+            res.render('index', {title: 'All blogs', blogs: result})
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+});
  ~~~
 
-
+###### Request types
+- GET requests to get a resource
+- POST requests to create new data
+- DLETE requests to pelete data
+- PUT requests to update data
+###### post
  ~~~javascript
- 
+app.use(express.urlencoded({extended: true}));
+
+ app.post('/blogs', (req, res) =>{
+    console.log(req.body);
+    const blog = new Blog(req.body);
+    blog.save()
+        .then((result) =>{
+            res.redirect('/blogs');
+        })
+        .catch((err) => {
+            console.log(err, 'Erro para criar um blog')
+        })
+})
  ~~~
 
 

@@ -16,7 +16,7 @@ mongoose.connect(dbURI, {useNewUrlParser: true, useUnifiedTopology: true})
     })
     .catch((err) =>{ 
         console.log(err);
-        console.log('deu erro')
+        console.log('deu erro na conexão com o banco, provavelmente foi a lista de ip permitidos')
 
     })
 
@@ -25,67 +25,45 @@ mongoose.connect(dbURI, {useNewUrlParser: true, useUnifiedTopology: true})
 app.set('view engine', 'ejs');
 //app.set('views', 'myviews'); caso as views não fossem colocadas numa pasta chamada views
 
-// mongoose and ong sandbox routes
-app.get('/add-blog', (req, res)=>{
-    const blog = new Blog({
-        title: 'new blog 2',
-        snippet: 'about my new blog',
-        body: 'tesxteowjfaosiefjoasejfoajojfoasidjfoiasj'
-    });
 
-    blog.save()
-    .then((result) =>{
-        res.send(result)
-    })
-    .catch((err) =>{
-        console.log(err)
-        console.log('erro no save')
-    })
-})
-
-
-app.get('/all-blogs', (req, res)=>{
-    Blog.find()
-    .then((result) =>{
-        res.send(result);
-    })
-    .catch((err) =>{
-        console.log(err)
-        console.log('erro no find')
-    })
-})
-
-
-app.get('/single-blog', (req, res) =>{
-    Blog.findById('63e02c5fd9081135f4650645')
-    .then((result) =>{
-        res.send(result);
-    })
-    .catch((err) =>{
-        console.log(err)
-        console.log('erro no findby id')
-    })
-})
 
 
 //middleware static files
 app.use(express.static('public'));
+app.use(express.urlencoded({extended: true}));
 app.use(morgan('dev'))
 
 app.get('/', (req, res)=>{
-    const blogs = [
-        {title: 'A cada dia da hora', snippet: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'},
-        {title: 'A cada dia da hora', snippet: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'},
-        {title: 'A cada dia da hora', snippet: 'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv'}
-    ];
-    res.render('index', {title: 'home', blogs});// passando um dado para a view
+    res.redirect('/blogs')
 });
 
 
 app.get('/about', (req, res)=>{
     res.render('about', {title: 'about'})
 });
+//blog routes
 
+app.post('/blogs', (req, res) =>{
+    console.log(req.body);
+    const blog = new Blog(req.body);
+    blog.save()
+        .then((result) =>{
+            res.redirect('/blogs');
+        })
+        .catch((err) => {
+            console.log(err, 'Erro para criar um blog')
+        })
+})
+
+app.get('/blogs', (req, res)=>{
+    Blog.find().sort({createdAt: -1})
+        .then((result) =>{
+            res.render('index', {title: 'All blogs', blogs: result})
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+});
 
 app.get('/blogs/create', (req, res) =>{
     res.render('create', {title: 'create'});
