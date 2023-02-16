@@ -1,7 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const Blog = require('./models/blog')
+const Blog = require('./models/blog');
+const { add } = require('lodash');
 //express app
 const app = express();
 
@@ -52,6 +53,30 @@ app.post('/blogs', (req, res) =>{
         })
         .catch((err) => {
             console.log(err, 'Erro para criar um blog')
+        })
+})
+
+app.get('/blogs/:id', (req, res)=>{
+    const id = req.params.id;
+    console.log(id)
+    Blog.findById(id)
+        .then((result) =>{
+            res.render('details', {blog: result, title: 'Blog details'})
+        })
+        .catch((err) =>{
+            console.log(err)
+        })
+})
+
+app.delete('/blogs/:id', (req, res)=>{
+    const id = req.params.id;
+
+    Blog.findByIdAndDelete(id)
+        .then(result =>{
+            res.json({redirect: '/blogs'})
+        })
+        .catch((err) =>{
+            console.log(err)
         })
 })
 

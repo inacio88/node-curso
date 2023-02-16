@@ -1002,23 +1002,99 @@ app.use(express.urlencoded({extended: true}));
 })
  ~~~
 
-
+##### Roue parameters
+- The variable parts of the route that may change value
+    - localhost:3000/blogs/:id
  ~~~javascript
- 
+ app.get('/blogs/:id', (req, res)=>{
+    const id = req.params.id;
+    console.log(id)
+    Blog.findById(id)
+        .then((result) =>{
+            res.render('details', {blog: result, title: 'Blog details'})
+        })
+        .catch((err) =>{
+            console.log(err)
+        })
+})
  ~~~
 
 
- ~~~javascript
- 
+ ~~~html
+ <!DOCTYPE html>
+<html lang="en">
+    <%- include('./partials/head.ejs') %>
+
+<body>
+    <%- include('./partials/nav.ejs') %>
+    <div class="blogs content">
+        <h2>All blogs</h2>
+        <% if (blogs.length > 0) { %>
+            <% blogs.forEach(blog => { %>
+                <a class="single" href="/blogs/<%= blog._id %>">
+                    <h3><%=blog.title %></h3>
+                    <p><%=blog.snippet %></p>
+                </a>
+            <% }); %>
+        <% } else { %>
+            <p>Vazio</p>
+            <% } %>
+    </div>
+
+    <%- include('./partials/footer.ejs') %>
+</body>
+</html>
  ~~~
 
-
+###### delete
  ~~~javascript
- 
+ <html lang="en">
+<%- include("./partials/head.ejs") %>
+
+<body>
+  <%- include("./partials/nav.ejs") %>
+
+  <div class="details content">
+    <h2><%= blog.title %></h2>
+    <div class="content">
+      <p><%= blog.body %></p>
+    </div>
+    <a class="delete" data-doc="<%= blog._id %>">delete</a>
+  </div>
+
+  <%- include("./partials/footer.ejs") %>
+
+  <script>
+    const trashcan = document.querySelector('a.delete');
+
+    trashcan.addEventListener('click', (e) => {
+      const endpoint = `/blogs/${trashcan.dataset.doc}`;
+
+      fetch(endpoint, {
+        method: 'DELETE',
+      })
+      .then(response => response.json())
+      .then(data => window.location.href = data.redirect)
+      .catch(err => console.log(err));
+    });
+    
+  </script>
+</body>
+</html>
  ~~~
 
  ~~~javascript
- 
+ app.delete('/blogs/:id', (req, res)=>{
+    const id = req.params.id;
+
+    Blog.findByIdAndDelete(id)
+        .then(result =>{
+            res.json({redirect: '/blogs'})
+        })
+        .catch((err) =>{
+            console.log(err)
+        })
+})
  ~~~
 
 
